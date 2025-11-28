@@ -36,6 +36,10 @@ const storage = new CloudinaryStorage({
     public_id: (req, file) => {
       const timestamp = Date.now();
       const originalName = file.originalname.split('.')[0];
+
+      if (req.originalUrl.includes('amenities')) {
+        return `amenity-${timestamp}-${originalName}`;
+      }
       return `room-${timestamp}-${originalName}`;
     },
     transformation: [

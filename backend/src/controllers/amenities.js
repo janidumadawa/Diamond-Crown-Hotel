@@ -1,4 +1,3 @@
-// backend/src/controllers/amenities.js
 const Amenity = require('../models/Amenity');
 const ErrorHandler = require('../utils/errorHandler');
 
@@ -38,9 +37,9 @@ exports.createAmenity = async (req, res, next) => {
             });
         }
 
-        // Use FULL URL for the image
-        const baseUrl = `${req.protocol}://${req.get('host')}`;
-        const image = `${baseUrl}/uploads/${req.file.filename}`;
+        // Use Cloudinary URL directly from req.file.path
+        const image = req.file.path;
+        console.log('Cloudinary image URL:', image);
 
         const amenity = await Amenity.create({
             title,
@@ -78,10 +77,10 @@ exports.updateAmenity = async (req, res, next) => {
         const { title, description } = req.body;
         const updateData = { title, description };
 
-        // If new image is uploaded
+        // If new image is uploaded to Cloudinary
         if (req.file) {
-            const baseUrl = `${req.protocol}://${req.get('host')}`;
-            updateData.image = `${baseUrl}/uploads/${req.file.filename}`;
+            updateData.image = req.file.path; // Cloudinary URL
+            console.log('Updated Cloudinary image URL:', updateData.image);
         }
 
         amenity = await Amenity.findByIdAndUpdate(req.params.id, updateData, {
