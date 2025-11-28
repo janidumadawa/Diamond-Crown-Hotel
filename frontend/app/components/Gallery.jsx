@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { michroma } from "../../lib/fonts";
 
+
 const Gallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -99,7 +100,11 @@ const Gallery = () => {
                     >
                       <div className="image-wrapper">
                         <img
-                          src={`http://localhost:5000/uploads/${image.image}`}
+                          src={
+                            image.image && (image.image.startsWith("http") || image.image.startsWith("//"))
+                              ? image.image
+                              : `http://localhost:5000/uploads/${image.image}`
+                          }
                           alt={image.title}
                           className="slider-image"
                           onError={(e) => {
@@ -259,7 +264,11 @@ const Gallery = () => {
           >
             <div className="relative">
               <img
-                src={`http://localhost:5000/uploads/${selectedImage.image}`}
+                src={
+                  selectedImage.image && (selectedImage.image.startsWith("http") || selectedImage.image.startsWith("//"))
+                    ? selectedImage.image
+                    : `http://localhost:5000/uploads/${selectedImage.image}`
+                }
                 alt={selectedImage.title}
                 className="max-w-full max-h-[80vh] object-contain"
               />

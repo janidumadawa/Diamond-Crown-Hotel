@@ -39,8 +39,11 @@ const storage = new CloudinaryStorage({
 
       if (req.originalUrl.includes('amenities')) {
         return `amenity-${timestamp}-${originalName}`;
-      }
+      } else if (req.originalUrl.includes('gallery')) {
+        return `gallery-${timestamp}-${originalName}`;
+      } else{
       return `room-${timestamp}-${originalName}`;
+      }
     },
     transformation: [
       { width: 800, height: 600, crop: "limit" },

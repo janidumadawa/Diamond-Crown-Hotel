@@ -1,3 +1,4 @@
+// backend/src/routes/gallery.js
 const express = require('express');
 const {
   getGalleryImages,
