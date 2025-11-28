@@ -156,11 +156,11 @@ const Rooms = () => {
               {/* Room Image - Clean Layout */}
               <div className="relative w-full lg:w-1/2 h-72 md:h-96 lg:h-[500px] rounded-lg overflow-hidden">
                 <img
-                  src={currentRoomData.images?.[0] || '/images/default-room.jpg'}
+                  src={currentRoomData.images?.[0] ??  '/images/default-room.png'}
                   alt={currentRoomData.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src = '/images/default-room.jpg';
+                    e.target.src = '/images/default-room.png';
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>

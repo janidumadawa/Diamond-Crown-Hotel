@@ -81,34 +81,32 @@ exports.getRoom = async (req, res, next) => {
   }
 };
 
-// @desc    create room (Admin only )
+// @desc    create room (Admin only)
 // @route   POST /api/rooms
 // @access  Private/Admin
-// In your backend controllers/rooms.js or admin controller
 exports.createRoom = async (req, res, next) => {
   try {
     const roomData = { ...req.body };
 
     console.log("Received room data:", roomData);
-    console.log("Received images:", roomData.images);
+    console.log("Uploaded files:", req.files);
 
-    // If images come as string, parse them
-    if (typeof roomData.images === 'string' && roomData.images.trim() !== '') {
-    try {
-        roomData.images = JSON.parse(roomData.images);
-    } catch {
-        roomData.images = [roomData.images];
-    }
-    }
-
-
-    // Handle file uploads if any
+    // Handle Cloudinary file uploads
     if (req.files && req.files.length > 0) {
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
-      const fileUrls = req.files.map(
-        (file) => `${baseUrl}/uploads/${file.filename}`
-      );
-      roomData.images = [...(roomData.images || []), ...fileUrls];
+      // Cloudinary already uploaded files, get URLs from req.files
+      const cloudinaryUrls = req.files.map(file => file.path);
+      roomData.images = [...(roomData.images || []), ...cloudinaryUrls];
+      
+      console.log("Cloudinary image URLs:", cloudinaryUrls);
+    }
+
+    // Parse images if they come as JSON string
+    if (typeof roomData.images === 'string') {
+      try {
+        roomData.images = JSON.parse(roomData.images);
+      } catch (e) {
+        roomData.images = [roomData.images];
+      }
     }
 
     console.log("Final room data before save:", roomData);
@@ -125,7 +123,7 @@ exports.createRoom = async (req, res, next) => {
   }
 };
 
-// @desc    update room (Admin only )
+// @desc    update room (Admin only)
 // @route   PUT /api/rooms/:id
 // @access  Private/Admin
 exports.updateRoom = async (req, res, next) => {
@@ -138,8 +136,19 @@ exports.updateRoom = async (req, res, next) => {
 
     const roomData = { ...req.body };
 
+    // Handle Cloudinary file uploads for updates
     if (req.files && req.files.length > 0) {
-    roomData.images = [...(room.images || []), ...req.files.map(file => `/uploads/${file.filename}`)];
+      const cloudinaryUrls = req.files.map(file => file.path);
+      roomData.images = [...(room.images || []), ...cloudinaryUrls];
+    }
+
+    // Parse images if they come as JSON string
+    if (typeof roomData.images === 'string') {
+      try {
+        roomData.images = JSON.parse(roomData.images);
+      } catch (e) {
+        roomData.images = [roomData.images];
+      }
     }
 
     room = await Room.findByIdAndUpdate(req.params.id, roomData, {

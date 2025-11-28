@@ -1,12 +1,28 @@
 // frontend/components/RoomCard.jsx
 import Link from "next/link";
 
-
 export default function RoomCard({ room }) {
+  
+  // Fix image URL - handle both local and Cloudinary URLs
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/images/default-room.png';
+    
+    // If it's already a full URL (http or https), use it directly
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    // If it's a local path, construct the full URL
+    if (imagePath.startsWith('/uploads')) {
+      return `http://localhost:5000${imagePath}`;
+    }
+    
+    return '/images/default-room.png';
+  };
 
   const mainImage = room.images && room.images.length > 0 
-  ? room.images[0] 
-  : '/images/default-room.png';
+    ? getImageUrl(room.images[0])
+    : '/images/default-room.png';
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 hover:border-yellow-200">
@@ -17,6 +33,10 @@ export default function RoomCard({ room }) {
           src={mainImage}
           alt={room.name}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            console.log('Image failed to load:', mainImage);
+            e.target.src = '/images/default-room.png';
+          }}
         />
         {/* Room Type Badge */}
         <div className="absolute top-3 right-3">

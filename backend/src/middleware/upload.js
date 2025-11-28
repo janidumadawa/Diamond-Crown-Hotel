@@ -20,7 +20,6 @@
 // module.exports = upload;
 
 
-// backend/src/middleware/upload.js
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
@@ -29,12 +28,36 @@ const cloudinary = require('../config/cloudinary');
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'diamond-crown-hotel', // optional: folder in Cloudinary
-    format: async (req, file) => file.mimetype.split('/')[1], // keeps original file extension
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`, // unique filename
+    folder: 'diamond-crown-hotel',
+    format: async (req, file) => {
+      const format = file.mimetype.split('/')[1];
+      return ['png', 'jpg', 'jpeg', 'webp'].includes(format) ? format : 'png';
+    },
+    public_id: (req, file) => {
+      const timestamp = Date.now();
+      const originalName = file.originalname.split('.')[0];
+      return `room-${timestamp}-${originalName}`;
+    },
+    transformation: [
+      { width: 800, height: 600, crop: "limit" },
+      { quality: "auto" },
+      { format: "auto" }
+    ]
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 module.exports = upload;

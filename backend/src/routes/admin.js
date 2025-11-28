@@ -44,26 +44,24 @@ router.post("/upload-image", upload.array("images", 10), (req, res) => {
   try {
     console.log("Upload request received, files:", req.files);
 
-    // Check if files exist, if not return empty array
+    // Check if files exist
     if (!req.files || req.files.length === 0) {
       console.log("No files uploaded");
-      return res.status(200).json({
-        success: true,
-        urls: [],
+      return res.status(400).json({
+        success: false,
         message: "No files uploaded",
       });
     }
 
-    // Generate URLs for uploaded files
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const urls = req.files.map((file) => `${baseUrl}/uploads/${file.filename}`);
+    // Cloudinary already uploaded files, get URLs directly
+    const urls = req.files.map(file => file.path);
 
-    console.log("Generated URLs:", urls);
+    console.log("Cloudinary URLs:", urls);
 
     res.status(200).json({
       success: true,
       urls,
-      message: `Successfully uploaded ${req.files.length} image(s)`,
+      message: `Successfully uploaded ${req.files.length} image(s) to Cloudinary`,
     });
   } catch (error) {
     console.error("Upload error:", error);
@@ -74,6 +72,7 @@ router.post("/upload-image", upload.array("images", 10), (req, res) => {
     });
   }
 });
+
 
 // Amenities Management
 router.get('/amenities', getAmenities);
