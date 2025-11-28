@@ -1,0 +1,22 @@
+# Node
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# env
+.env
+frontend/.env.local
+backend/.env
+
+# build output
+frontend/.next/
+frontend/.vercel/
+build/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# uploads (only if  don't want to push them)
+backend/uploads/
