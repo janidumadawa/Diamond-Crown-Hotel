@@ -1,3 +1,4 @@
+// backend/server.js
 const app = require('./src/app');
 const connectDatabase = require('./src/config/database');
 
@@ -11,8 +12,9 @@ process.on('uncaughtException', (err) => {
 // Connect to database
 connectDatabase();
 
-const server = app.listen(process.env.PORT, () => {
-    console.log(`Server running on port ${process.env.PORT} in ${process.env.NODE_ENV} mode`);
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });
 
 // Handle unhandled promise rejections
