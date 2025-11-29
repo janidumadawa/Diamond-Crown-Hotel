@@ -32,39 +32,32 @@ export default function ProfilePage() {
     }
   }, [loading, isAuthenticated, user]);
 
-  const fetchUserMessages = async () => {
+const fetchUserMessages = async () => {
   try {
     setMessagesLoading(true);
-    const token = localStorage.getItem('token');
     
-    console.log("Token from localStorage:", token); // Debug line
+    console.log("Fetching user messages..."); // Debug line
 
-    if (!token) {
-      console.error("No token found in localStorage");
-      setUserMessages([]);
-      return;
-    }
-
+    // Use credentials: "include" to send cookies automatically
     const response = await fetch('http://localhost:5000/api/contact/user/messages', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      credentials: 'include' // Add this line
+      credentials: 'include' // This sends cookies automatically
     });
 
-    console.log("Response status:", response.status); // Debug line
+    console.log("Response status:", response.status);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch messages: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("API response data:", data); // Debug line
+    console.log("API response data:", data);
     
     if (data.success) {
-      setUserMessages(data.data);
+      setUserMessages(data.data || []);
     } else {
       console.error('API error:', data.message);
       setUserMessages([]);
