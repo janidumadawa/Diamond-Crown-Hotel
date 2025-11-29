@@ -41,9 +41,12 @@ app.use(express.urlencoded({ extended: true }));
 // }));
 
 
+// CORS configuration
 app.use(cors({
     origin: [
-        'https://diamond-crown-hotel.vercel.app', // Vercel app
+        'https://diamond-crown-hotel.vercel.app', // Your Vercel app
+        'https://*.vercel.app', // All Vercel subdomains
+        'https://*.up.railway.app', // All Railway subdomains
         'http://localhost:3000'
     ],
     credentials: true,
@@ -75,6 +78,21 @@ app.all('*', (req, res) => {
     res.status(404).json({
         success: false,
         message: `Route ${req.originalUrl} not found`
+    });
+});
+
+// Test cookie endpoint
+app.get('/api/test-cookie', (req, res) => {
+    res.cookie('test_cookie', 'working', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+    res.json({ 
+        success: true, 
+        message: 'Cookie should be set',
+        environment: process.env.NODE_ENV
     });
 });
 

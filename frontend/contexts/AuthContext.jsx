@@ -1,13 +1,14 @@
+// frontend/contexts/AuthContext.jsx
 "use client";
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authAPI } from '../lib/api';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { authAPI } from "../lib/api";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -19,28 +20,60 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuthStatus();
-    
+
     // Listen for unauthorized events
     const handleUnauthorized = () => {
       setUser(null);
       setIsAuthenticated(false);
       setLoading(false);
     };
-    
-    window.addEventListener('unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('unauthorized', handleUnauthorized);
+
+    window.addEventListener("unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("unauthorized", handleUnauthorized);
   }, []);
+
+
+
+  const login = async (email, password) => {
+  try {
+    const response = await authAPI.login({ email, password });
+    console.log("✅ Login successful:", response);
+    
+    // Store user in session storage as fallback
+    if (response.user) {
+      sessionStorage.setItem('user', JSON.stringify(response.user));
+    }
+    
+    setUser(response.user);
+    setIsAuthenticated(true);
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 
 const checkAuthStatus = async () => {
   try {
     const response = await authAPI.getMe();
     console.log("✅ Auth check successful:", response);
+    
+    // Update session storage
+    sessionStorage.setItem('user', JSON.stringify(response.data));
+    
     setUser(response.data);
     setIsAuthenticated(true);
   } catch (error) {
     console.log("🔐 Auth check failed:", error.message);
-    // Don't clear user immediately, wait for confirmation
-    if (error.message === "Authentication required") {
+    
+    // Fallback to session storage
+    const storedUser = sessionStorage.getItem('user');
+    if (storedUser) {
+      console.log("✅ Using session storage fallback");
+      setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
+    } else {
       setUser(null);
       setIsAuthenticated(false);
     }
@@ -49,18 +82,6 @@ const checkAuthStatus = async () => {
   }
 };
 
-  const login = async (email, password) => {
-    try {
-      const response = await authAPI.login({ email, password });
-      console.log("✅ Login successful:", response);
-      setUser(response.user);
-      setIsAuthenticated(true);
-      return { success: true };
-    } catch (error) {
-      console.error("❌ Login failed:", error);
-      return { success: false, error: error.message };
-    }
-  };
 
   const register = async (userData) => {
     try {
@@ -75,17 +96,18 @@ const checkAuthStatus = async () => {
     }
   };
 
-  const logout = async () => {
-    try {
-      await authAPI.logout();
-      console.log("✅ Logout successful");
-    } catch (error) {
-      console.error("❌ Logout error:", error);
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  };
+const logout = async () => {
+  try {
+    await authAPI.logout();
+  } catch (error) {
+    console.error("❌ Logout error:", error);
+  } finally {
+    // Clear session storage
+    sessionStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
+  }
+};
 
   const value = {
     user,
