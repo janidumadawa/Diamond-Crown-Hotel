@@ -42,6 +42,10 @@ router.delete("/rooms/:id", deleteRoom);
 
 router.post("/upload-image", upload.array("images", 10), (req, res) => {
   try {
+    console.log("🔧 Upload debug - Environment check:");
+    console.log('CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME);
+    console.log('CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING');
+    
     console.log("Upload request received, files:", req.files);
 
     // Check if files exist
@@ -53,15 +57,18 @@ router.post("/upload-image", upload.array("images", 10), (req, res) => {
       });
     }
 
-    // Cloudinary already uploaded files, get URLs directly
-    const urls = req.files.map(file => file.path);
+    // Check what storage was used
+    const usedCloudinary = req.files[0].path && req.files[0].path.includes('cloudinary.com');
+    console.log('Storage used:', usedCloudinary ? 'Cloudinary' : 'Local');
 
-    console.log("Cloudinary URLs:", urls);
+    const urls = req.files.map(file => file.path);
+    console.log("Generated URLs:", urls);
 
     res.status(200).json({
       success: true,
       urls,
-      message: `Successfully uploaded ${req.files.length} image(s) to Cloudinary`,
+      storage: usedCloudinary ? 'cloudinary' : 'local',
+      message: `Successfully uploaded ${req.files.length} image(s)`,
     });
   } catch (error) {
     console.error("Upload error:", error);
@@ -72,7 +79,6 @@ router.post("/upload-image", upload.array("images", 10), (req, res) => {
     });
   }
 });
-
 
 // Amenities Management
 router.get('/amenities', getAmenities);

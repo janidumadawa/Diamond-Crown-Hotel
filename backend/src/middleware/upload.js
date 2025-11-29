@@ -1,48 +1,53 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const cloudinary = require('../config/cloudinary');
 
 let storage;
 
-// Check if Cloudinary is configured properly
-const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                              process.env.CLOUDINARY_API_KEY && 
-                              process.env.CLOUDINARY_API_SECRET;
-
-if (isCloudinaryConfigured) {
-  console.log('✅ Using Cloudinary for file storage');
+try {
+  const cloudinary = require('../config/cloudinary');
   const { CloudinaryStorage } = require('multer-storage-cloudinary');
   
-  storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-      folder: 'diamond-crown-hotel',
-      format: async (req, file) => {
-        const format = file.mimetype.split('/')[1];
-        return ['png', 'jpg', 'jpeg', 'webp'].includes(format) ? format : 'png';
-      },
-      public_id: (req, file) => {
-        const timestamp = Date.now();
-        const originalName = file.originalname.split('.')[0];
+  // Check if Cloudinary is properly configured
+  const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                process.env.CLOUDINARY_API_KEY && 
+                                process.env.CLOUDINARY_API_SECRET;
 
-        if (req.originalUrl.includes('amenities')) {
-          return `amenity-${timestamp}-${originalName}`;
-        } else if (req.originalUrl.includes('gallery')) {
-          return `gallery-${timestamp}-${originalName}`;
-        } else {
-          return `room-${timestamp}-${originalName}`;
-        }
+  if (isCloudinaryConfigured) {
+    console.log('✅ Using Cloudinary for file storage');
+    
+    storage = new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: 'diamond-crown-hotel',
+        format: async (req, file) => {
+          const format = file.mimetype.split('/')[1];
+          return ['png', 'jpg', 'jpeg', 'webp'].includes(format) ? format : 'png';
+        },
+        public_id: (req, file) => {
+          const timestamp = Date.now();
+          const originalName = file.originalname.split('.')[0];
+
+          if (req.originalUrl && req.originalUrl.includes('amenities')) {
+            return `amenity-${timestamp}-${originalName}`;
+          } else if (req.originalUrl && req.originalUrl.includes('gallery')) {
+            return `gallery-${timestamp}-${originalName}`;
+          } else {
+            return `room-${timestamp}-${originalName}`;
+          }
+        },
+        transformation: [
+          { width: 800, height: 600, crop: "limit" },
+          { quality: "auto" },
+          { format: "auto" }
+        ]
       },
-      transformation: [
-        { width: 800, height: 600, crop: "limit" },
-        { quality: "auto" },
-        { format: "auto" }
-      ]
-    },
-  });
-} else {
-  console.log('⚠️  Cloudinary not configured - using local storage as fallback');
+    });
+  } else {
+    throw new Error('Cloudinary credentials missing');
+  }
+} catch (error) {
+  console.log('⚠️  Cloudinary not available - using local storage:', error.message);
   // Fallback to local storage
   storage = multer.diskStorage({
     destination: function (req, file, cb) {
