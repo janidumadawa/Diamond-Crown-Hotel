@@ -123,7 +123,7 @@ const Gallery = () => {
             <style jsx>{`
               .slider-track {
                 display: flex;
-                animation: slide 40s linear infinite;
+                animation: slide 20s linear infinite;
               }
 
               .slider-content {
