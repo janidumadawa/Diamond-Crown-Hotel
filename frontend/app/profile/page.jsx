@@ -39,7 +39,7 @@ const fetchUserMessages = async () => {
     console.log("Fetching user messages..."); // Debug line
 
     // Use credentials: "include" to send cookies automatically
-    const response = await fetch('http://localhost:5000/api/contact/user/messages', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact/user/messages`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

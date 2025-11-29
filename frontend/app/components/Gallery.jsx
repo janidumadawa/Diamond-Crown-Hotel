@@ -16,7 +16,7 @@ const Gallery = () => {
 
   const fetchGalleryImages = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/gallery");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/gallery`);
       const data = await response.json();
       if (data.success) {
         setGalleryImages(data.images || []);

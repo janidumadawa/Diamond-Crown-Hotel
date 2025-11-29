@@ -44,7 +44,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin: [
         'https://diamond-crown-hotel.vercel.app', // Vercel app
-        'https://*.vercel.app', // All Vercel subdomains
         'http://localhost:3000'
     ],
     credentials: true,
