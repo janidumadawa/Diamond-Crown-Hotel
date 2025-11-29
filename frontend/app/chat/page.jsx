@@ -110,7 +110,7 @@ export default function ChatPopup() {
   return (
     <>
       {/* Trigger Button */}
-      <button
+      {/* <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 bg-yellow-500 text-white px-4 py-3 rounded-full shadow-lg hover:bg-yellow-600 transition-colors z-40 flex items-center space-x-2"
       >
@@ -118,7 +118,7 @@ export default function ChatPopup() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
         <span className="font-medium">Get Help AI</span>
-      </button>
+      </button> */}
 
       {/* Popup Modal with Blurred Background */}
       {isOpen && (
