@@ -31,20 +31,23 @@ export const AuthProvider = ({ children }) => {
     return () => window.removeEventListener('unauthorized', handleUnauthorized);
   }, []);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await authAPI.getMe();
-      console.log("✅ Auth check successful:", response);
-      setUser(response.data);
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.log("🔐 Auth check failed (normal for first visit):", error.message);
+const checkAuthStatus = async () => {
+  try {
+    const response = await authAPI.getMe();
+    console.log("✅ Auth check successful:", response);
+    setUser(response.data);
+    setIsAuthenticated(true);
+  } catch (error) {
+    console.log("🔐 Auth check failed:", error.message);
+    // Don't clear user immediately, wait for confirmation
+    if (error.message === "Authentication required") {
       setUser(null);
       setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   const login = async (email, password) => {
     try {
