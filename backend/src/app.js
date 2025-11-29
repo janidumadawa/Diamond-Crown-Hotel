@@ -32,9 +32,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// FIX CORS configuration
+// CORS configuration
+// app.use(cors({
+//     origin: process.env.CLIENT_URL || 'http://localhost:3000', // Add fallback
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+// }));
+
+
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Add fallback
+    origin: [
+        process.env.CLIENT_URL,
+        'http://localhost:3000', // Keep for local development
+        'https://your-app-name.vercel.app' // Your actual Vercel URL
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
