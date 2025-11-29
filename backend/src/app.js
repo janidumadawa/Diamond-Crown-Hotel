@@ -43,9 +43,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: [
-        process.env.CLIENT_URL,
-        'https://diamond-crown-hotel.vercel.app',
-        'http://localhost:3000', // local development
+        'https://diamond-crown-hotel.vercel.app', // Vercel app
+        'https://*.vercel.app', // All Vercel subdomains
+        'http://localhost:3000'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
