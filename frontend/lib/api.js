@@ -9,7 +9,7 @@ export const apiClient = async (endpoint, options = {}) => {
       "Content-Type": "application/json",
       ...options.headers,
     },
-    credentials: "include", // Keep this
+    credentials: "include", 
     ...options,
   };
 
