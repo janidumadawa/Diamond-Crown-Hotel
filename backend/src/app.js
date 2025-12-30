@@ -1,59 +1,39 @@
-// backend/src/app.js
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser'); // ADD THIS
+const cookieParser = require('cookie-parser');
 
 // Load environment variables
 dotenv.config();
 
-// Import routes
-const adminRoutes = require('./routes/admin');
-const authRoutes = require('./routes/auth');
-const roomRoutes = require('./routes/rooms');
-const bookingRoutes = require('./routes/bookings');
-const amenityRoutes = require('./routes/amenities');
-const galleryRoutes = require('./routes/gallery');
-const contactRoutes = require('./routes/contact');
-
-// Import error middleware
-const errorMiddleware = require('./middleware/error');
-
 const app = express();
 
-// ADD COOKIE PARSER - THIS IS CRITICAL
+// ========== 1. CORS MUST BE FIRST ==========
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://diamond-crown-hotel.vercel.app' 
+    : 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Enable CORS for all routes - THIS MUST BE FIRST!
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// ========== 2. Then cookie parser ==========
 app.use(cookieParser());
 
+// ========== 3. Then static files ==========
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware
+// ========== 4. Then body parsers ==========
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// CORS configuration
-// app.use(cors({
-//     origin: process.env.CLIENT_URL || 'http://localhost:3000', // Add fallback
-//     credentials: true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
-// }));
-
-
-// CORS configuration
-app.use(cors({
-    origin: [
-        'https://diamond-crown-hotel.vercel.app', // Your Vercel app
-        'https://*.vercel.app', // All Vercel subdomains
-        'https://*.up.railway.app', // All Railway subdomains
-        'http://localhost:3000'
-    ],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Set-Cookie'],
-    exposedHeaders: ['Set-Cookie']
-}));
 
 // Test route
 app.get('/api/test', (req, res) => {
@@ -61,23 +41,6 @@ app.get('/api/test', (req, res) => {
         success: true,
         message: 'Diamond Crown Hotel API is working!',
         timestamp: new Date().toISOString()
-    });
-});
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/amenities', amenityRoutes);
-app.use('/api/gallery', galleryRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/admin', adminRoutes);
-
-// Handle undefined routes
-app.all('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Route ${req.originalUrl} not found`
     });
 });
 
@@ -96,12 +59,38 @@ app.get('/api/test-cookie', (req, res) => {
     });
 });
 
-// Error handling middleware
+// Import routes
+const adminRoutes = require('./routes/admin');
+const authRoutes = require('./routes/auth');
+const roomRoutes = require('./routes/rooms');
+const bookingRoutes = require('./routes/bookings');
+const amenityRoutes = require('./routes/amenities');
+const galleryRoutes = require('./routes/gallery');
+const contactRoutes = require('./routes/contact');
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/rooms', roomRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/amenities', amenityRoutes);
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Handle undefined routes
+app.all('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: `Route ${req.originalUrl} not found`
+    });
+});
+
+// Import error middleware
+const errorMiddleware = require('./middleware/error');
 app.use(errorMiddleware);
 
 // For Vercel serverless functions
 if (process.env.NODE_ENV === 'production') {
-  // Enable trust proxy for Vercel
   app.set('trust proxy', 1);
 }
 

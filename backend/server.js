@@ -1,4 +1,3 @@
-// backend/server.js
 const app = require('./src/app');
 const connectDatabase = require('./src/config/database');
 
@@ -9,32 +8,34 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-// Connect to database
-connectDatabase();
+// Connect to database (only in non-Vercel environment)
+if (process.env.NODE_ENV !== 'production' || process.env.VERCEL !== '1') {
+    connectDatabase();
+}
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.log(`ERROR: ${err.message}`);
-    console.log('Shutting down the server due to unhandled promise rejection');
-    process.exit(1);
-});
+const PORT = process.env.PORT || 5000;
 
-// Export the app for Vercel
-module.exports = app;
+// For Vercel deployment, we don't start a server
+// Vercel will handle the serverless function invocation
+if (process.env.NODE_ENV === 'production' && process.env.VERCEL === '1') {
+    // Export for Vercel serverless function
+    module.exports = app;
+} else {
+    // Local development - start server normally
+    const server = app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+        console.log(`API URL: http://localhost:${PORT}/api`);
+    });
 
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err) => {
+        console.log(`ERROR: ${err.message}`);
+        console.log('Shutting down the server due to unhandled promise rejection');
+        server.close(() => {
+            process.exit(1);
+        });
+    });
 
-// Listen on 0.0.0.0 for Railway
-// const server = app.listen(PORT, '0.0.0.0', () => {
-//   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-//   console.log(`Environment: ${process.env.NODE_ENV}`);
-//   console.log(`API URL: http://0.0.0.0:${PORT}/api`);
-// });
-
-// // Handle unhandled promise rejections
-// process.on('unhandledRejection', (err) => {
-//     console.log(`ERROR: ${err.message}`);
-//     console.log('Shutting down the server due to unhandled promise rejection');
-//     server.close(() => {
-//         process.exit(1);
-//     });
-// });
+    // Export the app for testing
+    module.exports = app;
+}

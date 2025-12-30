@@ -1,8 +1,5 @@
 // frontend/lib/api.js
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-// Change this line in frontend/lib/api.js
-const API_BASE_URL = "https://diamond-crown-backend.vercel.app/api";
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 // Helper function for API calls
 export const apiClient = async (endpoint, options = {}) => {
@@ -12,7 +9,7 @@ export const apiClient = async (endpoint, options = {}) => {
       "Content-Type": "application/json",
       ...options.headers,
     },
-    credentials: "include", // This sends cookies
+    credentials: "include", // Keep this
     ...options,
   };
 
@@ -26,7 +23,7 @@ export const apiClient = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-
+    
     // Handle unauthorized (will trigger logout)
     if (response.status === 401) {
       // Token is invalid/expired
