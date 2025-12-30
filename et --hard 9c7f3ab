@@ -1,0 +1,26 @@
+[33m006c3b9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m update railway and vercel urls
+[33mc6c61b5[m update app.js removing railway methods delete railway json
+[33m17aa8c6[m Merge branch 'main' of https://github.com/janidumadawa/Diamond-Crown-Hotel
+[33m9c7f3ab[m update backend deployment railway to vercel
+[33mcd37049[m Merge pull request #1 from janidumadawa/vercel/react-server-components-cve-vu-dg14dn
+[33mf360afa[m[33m ([m[1;31morigin/vercel/react-server-components-cve-vu-dg14dn[m[33m)[m Fix React Server Components CVE vulnerabilities
+[33ma9ec984[m change gallry  image slide speed
+[33mf8a140e[m commented ai feture in D:\visual studio program\Diamond-Crown-Hotel\frontend\app\chat\page.jsx 112 line
+[33mcf88986[m 1. Update  Cloudinary Config File
+[33mfdc3de2[m update CORS to Allow All Railway Subdomains in app.js
+[33md76c6b7[m update app.js CORS to be more permissive
+[33med1e5bd[m change hardcoded localhost urls to environment variable
+[33mc6b1bdd[m update app.js cors
+[33m4d8da77[m update app.js change vercel link
+[33m048b8c2[m railway backeend changers
+[33mae9f140[m fix bug in cloudanary implementation
+[33md4897ea[m update cors for deployment
+[33mc1b4528[m user profile contact massage bug fixed
+[33m149515d[m finalize gallery crud with cloudanary
+[33me8fa754[m Finalize amenties fuction with cloudanary image uploads
+[33m27634bc[m Room CRUD working with cloudanary image uploads
+[33m74ff934[m remove all local storage images
+[33me5dc7cf[m nothing specill just api.js line change
+[33mae62fdb[m backend update
+[33m71d5e31[m Add backend and frontend
+[33m34c5de8[m Initial commit clean
