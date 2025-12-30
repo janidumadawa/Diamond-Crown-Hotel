@@ -16,11 +16,11 @@ connectDatabase();
 
 
 // Listen on 0.0.0.0 for Railway
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🔗 API URL: http://0.0.0.0:${PORT}/api`);
-});
+// const server = app.listen(PORT, '0.0.0.0', () => {
+//   console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+//   console.log(`Environment: ${process.env.NODE_ENV}`);
+//   console.log(`API URL: http://0.0.0.0:${PORT}/api`);
+// });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
