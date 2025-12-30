@@ -1,6 +1,7 @@
 // frontend/lib/api.js
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+// Change this line in frontend/lib/api.js
+const API_BASE_URL = "https://diamond-crown-backend.vercel.app/api";
 
 
 // Helper function for API calls
