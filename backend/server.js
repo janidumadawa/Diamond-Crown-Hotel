@@ -9,10 +9,18 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 
-const PORT = process.env.PORT || 5000;
-
 // Connect to database
 connectDatabase();
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+    console.log(`ERROR: ${err.message}`);
+    console.log('Shutting down the server due to unhandled promise rejection');
+    process.exit(1);
+});
+
+// Export the app for Vercel
+module.exports = app;
 
 
 // Listen on 0.0.0.0 for Railway
@@ -22,11 +30,11 @@ connectDatabase();
 //   console.log(`API URL: http://0.0.0.0:${PORT}/api`);
 // });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.log(`ERROR: ${err.message}`);
-    console.log('Shutting down the server due to unhandled promise rejection');
-    server.close(() => {
-        process.exit(1);
-    });
-});
+// // Handle unhandled promise rejections
+// process.on('unhandledRejection', (err) => {
+//     console.log(`ERROR: ${err.message}`);
+//     console.log('Shutting down the server due to unhandled promise rejection');
+//     server.close(() => {
+//         process.exit(1);
+//     });
+// });

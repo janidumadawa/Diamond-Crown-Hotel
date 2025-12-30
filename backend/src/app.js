@@ -99,4 +99,10 @@ app.get('/api/test-cookie', (req, res) => {
 // Error handling middleware
 app.use(errorMiddleware);
 
+// For Vercel serverless functions
+if (process.env.NODE_ENV === 'production') {
+  // Enable trust proxy for Vercel
+  app.set('trust proxy', 1);
+}
+
 module.exports = app;
